@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GistNotes</string>
+    <string name="all_gists">All Gists</string>
+    <string name="notes">Notes</string>
+    <string name="all_in_one">All in one</string>
+    <string name="description">description</string>
+    <string name="user">user</string>
+</resources>
