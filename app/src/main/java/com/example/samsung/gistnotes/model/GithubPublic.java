@@ -1,83 +1,173 @@
-
 package com.example.samsung.gistnotes.model;
 
-import com.example.samsung.gistnotes.model.Files;
-import com.google.gson.annotations.Expose;
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.util.Log;
+
+import com.example.samsung.gistnotes.R;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.example.samsung.gistnotes.controller.MainActivity.LOG_TAG;
 
 public class GithubPublic {
+    /**
+     * url : https://api.github.com/gists/1eacccd58dcb7671451ca1b80926e5ac
+     * forks_url : https://api.github.com/gists/1eacccd58dcb7671451ca1b80926e5ac/forks
+     * commits_url : https://api.github.com/gists/1eacccd58dcb7671451ca1b80926e5ac/commits
+     * id : 1eacccd58dcb7671451ca1b80926e5ac
+     * git_pull_url : https://gist.github.com/1eacccd58dcb7671451ca1b80926e5ac.git
+     * git_push_url : https://gist.github.com/1eacccd58dcb7671451ca1b80926e5ac.git
+     * html_url : https://gist.github.com/1eacccd58dcb7671451ca1b80926e5ac
+     * files : {"gistfile1.txt":{"filename":"gistfile1.txt","type":"text/plain","language":"Text","raw_url":"https://gist.githubusercontent.com/klaas/1eacccd58dcb7671451ca1b80926e5ac/raw/eb8834fe379ecb5892fa7212dceea9055a48cff2/gistfile1.txt","size":3173}}
+     * public-gists.txt : true
+     * created_at : 2017-03-26T11:34:15Z
+     * updated_at : 2017-03-26T11:34:15Z
+     * description : DirectoryMonitor - Swift 3
+     * comments : 0
+     * user : null
+     * comments_url : https://api.github.com/gists/1eacccd58dcb7671451ca1b80926e5ac/comments
+     * owner : {"login":"klaas","id":320967,"avatar_url":"https://avatars3.githubusercontent.com/u/320967?v=3","gravatar_id":"","url":"https://api.github.com/users/klaas","html_url":"https://github.com/klaas","followers_url":"https://api.github.com/users/klaas/followers","following_url":"https://api.github.com/users/klaas/following{/other_user}","gists_url":"https://api.github.com/users/klaas/gists{/gist_id}","starred_url":"https://api.github.com/users/klaas/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/klaas/subscriptions","organizations_url":"https://api.github.com/users/klaas/orgs","repos_url":"https://api.github.com/users/klaas/repos","events_url":"https://api.github.com/users/klaas/events{/privacy}","received_events_url":"https://api.github.com/users/klaas/received_events","type":"User","site_admin":false}
+     * truncated : false
+     */
 
-    @SerializedName("url")
-    @Expose
     private String url;
-    @SerializedName("forks_url")
-    @Expose
-    private String forksUrl;
-    @SerializedName("commits_url")
-    @Expose
-    private String commitsUrl;
-    @SerializedName("id")
-    @Expose
+    private String forks_url;
+    private String commits_url;
     private String id;
-    @SerializedName("git_pull_url")
-    @Expose
-    private String gitPullUrl;
-    @SerializedName("git_push_url")
-    @Expose
-    private String gitPushUrl;
-    @SerializedName("html_url")
-    @Expose
-    private String htmlUrl;
-    @SerializedName("files")
-    @Expose
-    private Files files;
-    @SerializedName("public")
-    @Expose
-    private Boolean _public;
-    @SerializedName("created_at")
-    @Expose
-    private String createdAt;
-    @SerializedName("updated_at")
-    @Expose
-    private String updatedAt;
-    @SerializedName("description")
-    @Expose
+    private String git_pull_url;
+    private String git_push_url;
+    private String html_url;
+    private String files;
+    //    private Files files;
+    @SerializedName("public-gists")
+    private boolean publicX;
+    private String created_at;
+    private String updated_at;
     private String description;
-    @SerializedName("comments")
-    @Expose
-    private Integer comments;
-    @SerializedName("user")
-    @Expose
+    private int comments;
     private Object user;
-    @SerializedName("comments_url")
-    @Expose
-    private String commentsUrl;
-    @SerializedName("truncated")
-    @Expose
-    private Boolean truncated;
+    private String comments_url;
+    private Owner owner;
+    private boolean truncated;
 
-    public GithubPublic(String url, String forksUrl, String commitsUrl,
-                        String id, String gitPullUrl, String gitPushUrl,
-                        String htmlUrl, Files files, Boolean _public,
-                        String createdAt, String updatedAt,
-                        String description, Integer comments,
-                        Object user, String commentsUrl, Boolean truncated) {
-        this.url = url;
-        this.forksUrl = forksUrl;
-        this.commitsUrl = commitsUrl;
-        this.id = id;
-        this.gitPullUrl = gitPullUrl;
-        this.gitPushUrl = gitPushUrl;
-        this.htmlUrl = htmlUrl;
-        this.files = files;
-        this._public = _public;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.description = description;
-        this.comments = comments;
-        this.user = user;
-        this.commentsUrl = commentsUrl;
-        this.truncated = truncated;
+    public static GithubPublic objectFromData(String str) {
+
+        return new Gson().fromJson(str, GithubPublic.class);
+    }
+
+    public static GithubPublic objectFromData(String str, String key) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(str);
+
+            return new Gson().fromJson(jsonObject.getString(str), GithubPublic.class);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static List<GithubPublic> arrayGithubPublicFromData(String str) {
+
+        Type listType = new TypeToken<ArrayList<GithubPublic>>() {
+        }.getType();
+
+        return new Gson().fromJson(str, listType);
+    }
+
+    public static List<GithubPublic> arrayGithubPublicFromData(String str, String key) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(str);
+            Type listType = new TypeToken<ArrayList<GithubPublic>>() {
+            }.getType();
+
+            return new Gson().fromJson(jsonObject.getString(str), listType);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList();
+
+
+    }
+
+    public static List<GithubPublic> readGists(Context context) {
+
+        List<String> fieldsOfClass = new ArrayList();
+        for (Field fieldOfClass : GithubPublic.class.getDeclaredFields()) {
+            fieldsOfClass.add("\"" + fieldOfClass.getName().toString() + "\":");
+        }
+
+        GithubPublic githubPublic = null;
+        List<GithubPublic> githubPublics = new LinkedList<>();
+//        FileInputStream stream = null;
+        AssetManager assetManager = context.getAssets();
+        InputStream input;
+
+        try {
+//            stream = context.openFileInput("public-gists.txt");
+            input = assetManager.open(context.getString(R.string.name_of_filq));
+            String line = null, fieldValueString = null;
+            int tag = 0;
+
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+                while ((line = reader.readLine()) != null) {
+
+                    if (line.indexOf("{", 2) < 3) {
+                        githubPublic = new GithubPublic();
+                        continue;
+                    } else if (line.indexOf("},", 2) < 4) {
+                        githubPublics.add(githubPublic);
+                    }
+
+                    for (String fieldOfClass : fieldsOfClass) {
+
+                        tag = line.indexOf(fieldOfClass, 4);
+                        if (tag < 6) {
+
+                            tag += (fieldOfClass.length() + 1);
+                            if (fieldOfClass.equals("\"id\":")) {
+                                githubPublic.setId(line.substring(tag, line.length() - 1));
+                                break;
+                            } else if (fieldOfClass.equals("\"description\":")) {
+                                githubPublic.setDescription(line.substring(tag, line.length() - 1));
+                                break;
+                            } else if (fieldOfClass.equals("\"user\":")) {
+                                githubPublic.setUser(line.substring(tag, line.length() - 1));
+                                break;
+                            }
+                        }
+                    }
+                }
+            } finally {
+                input.close();
+            }
+            Log.d(LOG_TAG, context.getString(R.string.Data_from_file_dp) + context.getString(R.string.name_of_filq));
+
+        } catch (Exception e) {
+            Log.d(LOG_TAG, context.getString(R.string.file_does_not_exist_or_an_error_occurred_while_reading));
+        }
+
+        return githubPublics;
     }
 
     public String getUrl() {
@@ -88,20 +178,20 @@ public class GithubPublic {
         this.url = url;
     }
 
-    public String getForksUrl() {
-        return forksUrl;
+    public String getForks_url() {
+        return forks_url;
     }
 
-    public void setForksUrl(String forksUrl) {
-        this.forksUrl = forksUrl;
+    public void setForks_url(String forks_url) {
+        this.forks_url = forks_url;
     }
 
-    public String getCommitsUrl() {
-        return commitsUrl;
+    public String getCommits_url() {
+        return commits_url;
     }
 
-    public void setCommitsUrl(String commitsUrl) {
-        this.commitsUrl = commitsUrl;
+    public void setCommits_url(String commits_url) {
+        this.commits_url = commits_url;
     }
 
     public String getId() {
@@ -112,60 +202,60 @@ public class GithubPublic {
         this.id = id;
     }
 
-    public String getGitPullUrl() {
-        return gitPullUrl;
+    public String getGit_pull_url() {
+        return git_pull_url;
     }
 
-    public void setGitPullUrl(String gitPullUrl) {
-        this.gitPullUrl = gitPullUrl;
+    public void setGit_pull_url(String git_pull_url) {
+        this.git_pull_url = git_pull_url;
     }
 
-    public String getGitPushUrl() {
-        return gitPushUrl;
+    public String getGit_push_url() {
+        return git_push_url;
     }
 
-    public void setGitPushUrl(String gitPushUrl) {
-        this.gitPushUrl = gitPushUrl;
+    public void setGit_push_url(String git_push_url) {
+        this.git_push_url = git_push_url;
     }
 
-    public String getHtmlUrl() {
-        return htmlUrl;
+    public String getHtml_url() {
+        return html_url;
     }
 
-    public void setHtmlUrl(String htmlUrl) {
-        this.htmlUrl = htmlUrl;
+    public void setHtml_url(String html_url) {
+        this.html_url = html_url;
     }
 
-    public Files getFiles() {
+    public String getFiles() {
         return files;
     }
 
-    public void setFiles(Files files) {
+    public void setFiles(String files) {
         this.files = files;
     }
 
-    public Boolean getPublic() {
-        return _public;
+    public boolean isPublicX() {
+        return publicX;
     }
 
-    public void setPublic(Boolean _public) {
-        this._public = _public;
+    public void setPublicX(boolean publicX) {
+        this.publicX = publicX;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
     }
 
-    public String getUpdatedAt() {
-        return updatedAt;
+    public String getUpdated_at() {
+        return updated_at;
     }
 
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
     }
 
     public String getDescription() {
@@ -176,11 +266,11 @@ public class GithubPublic {
         this.description = description;
     }
 
-    public Integer getComments() {
+    public int getComments() {
         return comments;
     }
 
-    public void setComments(Integer comments) {
+    public void setComments(int comments) {
         this.comments = comments;
     }
 
@@ -192,19 +282,27 @@ public class GithubPublic {
         this.user = user;
     }
 
-    public String getCommentsUrl() {
-        return commentsUrl;
+    public String getComments_url() {
+        return comments_url;
     }
 
-    public void setCommentsUrl(String commentsUrl) {
-        this.commentsUrl = commentsUrl;
+    public void setComments_url(String comments_url) {
+        this.comments_url = comments_url;
     }
 
-    public Boolean getTruncated() {
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+
+    public boolean isTruncated() {
         return truncated;
     }
 
-    public void setTruncated(Boolean truncated) {
+    public void setTruncated(boolean truncated) {
         this.truncated = truncated;
     }
 

@@ -22,7 +22,7 @@ public class GitHubClient {
     private static Retrofit retrofitClient = null;
     private static OkHttpClient okHttpClient;
 
-    public static Retrofit getRetrofitClient() {
+    public static Retrofit getRetrofitClientWithOkHttpClient() {
 
         okHttpClient = new Builder()
                 .addInterceptor(new Interceptor() {
@@ -39,6 +39,17 @@ public class GitHubClient {
             retrofitClient = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofitClient;
+    }
+
+    public static Retrofit getRetrofitClient() {
+
+        if (retrofitClient == null) {
+            retrofitClient = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

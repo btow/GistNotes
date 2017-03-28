@@ -31,20 +31,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
+        Intent intentAllGists = new Intent(this, AllInOneActivity.class);
+
         switch (v.getId()) {
 
-            case R.id.btnAllGists :
-                Intent intentAllGists = new Intent(this, AllGistsActivity.class);
-                startActivity(intentAllGists);
-                break;
             case R.id.btnNotes :
-                Intent intentNotes = new Intent(this, NotesActivity.class);
-                startActivity(intentNotes);
+                intentAllGists.putExtra("defaultTab", getString(R.string.tag_notes));
                 break;
-            case R.id.btnAllInOne :
+            default :
+                intentAllGists.putExtra("defaultTab", getString(R.string.tag_all_gists));
                 break;
 
         }
 
+        startActivity(intentAllGists);
     }
 }

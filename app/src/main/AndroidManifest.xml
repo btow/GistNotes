@@ -19,11 +19,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".controller.AllGistsActivity"
-            android:label="AllGistsActivity" />
-        <activity
-            android:name=".controller.NotesActivity"
-            android:label="NotesActivity"/>
+            android:name=".controller.AllInOneActivity"
+            android:label="AllInOneActivity"/>
     </application>
 
 </manifest>

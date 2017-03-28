@@ -11,13 +11,21 @@
         android:id="@+id/tvDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/description"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:text="@string/description" />
 
-    <TextView
-        android:id="@+id/tvUser"
+    <EditText
+        android:id="@+id/etDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/user" />
+        android:text=""
+        android:hint="@string/description"/>
+
+    <EditText
+        android:id="@+id/tvNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:hint="@string/note"/>
 
 </LinearLayout>
